@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import './App.css';
 import { ChessBoard } from './ChessBoard';
+import { ChoosePromotionDialog } from './ChoosePromotionDialog';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { RandomBot } from './engine/src/bots/RandomBot';
 import { isFen } from './engine/src/fen/FENString';
@@ -17,8 +18,10 @@ import {
   InverseColorMap,
   PieceColor,
 } from './engine/src/piece/PieceColor';
+import { PieceType } from './engine/src/piece/PieceType';
 import { GameStatus } from './engine/src/state/GameStatus';
 import { isGameOver } from './engine/src/state/utils/GameStatusUtils';
+import { PromotionRequiredError } from './engine/src/utils/errors/PromotionRequiredError';
 import { DefaultTheme } from './theme';
 
 function useForceRender() {
@@ -32,6 +35,21 @@ function App() {
   const playerColor = PieceColor.White;
   const bot = useRef(new RandomBot(InverseColorMap[playerColor], game.current));
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
+  const [promotionFromTo, setPromotionFromTo] = useState<[BoardPosition, BoardPosition] | null>(null);
+  const [execMove] = useState(() => (from: BoardPosition, to: BoardPosition, promoteTo?: PieceType) => {
+    const result = game.current.move(from, to, promoteTo);
+    if (result.isErr()) {
+      const err = result.unwrapErr();
+      if (err instanceof PromotionRequiredError) {
+        setPromotionFromTo([from, to]);
+      } else {
+        console.error(err);
+      }
+    } else {
+      setPromotionFromTo(null);
+    }
+    setHighlightedSquares([from, to]);
+  });
   const forceRender = useForceRender();
   useEffect(() => {
     if (isGameOver(game.current.gameState)) {
@@ -98,10 +116,19 @@ function App() {
           const allValidMoveTargetPositions = validMoves.flatMap(executableMoves => executableMoves.map(em => em.toPos));
           setHighlightedSquares(allValidMoveTargetPositions);
         }}
-        onMove={(from, to) => {
-          game.current.move(from, to);
-          setHighlightedSquares([from, to]);
+        onMove={execMove}
+      />
+      <ChoosePromotionDialog
+        color={playerColor}
+        Theme={DefaultTheme}
+        onPieceSelected={pieceType => {
+          if (!promotionFromTo) {
+            console.error('invalid state!')
+            return;
+          }
+          execMove(...promotionFromTo, pieceType);
         }}
+        divProps={{ hidden: promotionFromTo === null }}
       />
     </div>
   );

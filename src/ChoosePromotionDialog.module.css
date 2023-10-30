@@ -1,0 +1,8 @@
+.dialog {
+  border: #282C34 solid 1rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: white;
+  padding: 1rem;
+}
