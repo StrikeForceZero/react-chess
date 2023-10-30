@@ -72,6 +72,7 @@ function App() {
   const [customFenString, setCustomFenString] = useState<string>(currentFenString);
 
   function updateFen(fenString: string = serialize(game.current.gameState), allowLoading = false) {
+    console.log('updating fen: ', fenString);
     if (!isFen(fenString)) {
       throw new Error(`invalid fen string! ${fenString}`);
     }
