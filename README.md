@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# React Chess
+
+A chess engine written in typescript with a React front-end (Work in progress)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
