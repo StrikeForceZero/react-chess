@@ -100,6 +100,7 @@ function App() {
     if (isGameOver(game.current.gameState)) {
       return;
     }
+    // TODO: 5N2/1k1P4/4R3/5R2/5B1p/Pp1P3N/1P3P1P/2K5 w - - 1 38     d7 -> d8 reverts promotion when bot tries b7 to a8-c8, c7, or b6
     if (game.current.gameState.activeColor !== playerColor) {
       const moveResult = bot.current.handleTurn();
       if (moveResult.isOk()) {
