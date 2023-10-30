@@ -107,7 +107,6 @@ function App() {
         setHighlightedSquares([move.fromPos, move.toPos]);
         updateFen('bot after handleTurn');
       }
-      forceRender();
     }
   }, [game.current.gameState.activeColor]);
 
