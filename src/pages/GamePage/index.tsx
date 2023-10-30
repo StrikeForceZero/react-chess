@@ -24,7 +24,6 @@ import { PieceType } from '../../engine/src/piece/PieceType';
 import { GameStatus } from '../../engine/src/state/GameStatus';
 import { isGameOver } from '../../engine/src/state/utils/GameStatusUtils';
 import { PromotionRequiredError } from '../../engine/src/utils/errors/PromotionRequiredError';
-import { DefaultTheme } from '../../theme';
 
 export function GamePage() {
   const game = useRef((() => {
@@ -157,7 +156,6 @@ export function GamePage() {
       </div>
       <ChessBoard
         board={game.current.gameState.board}
-        theme={DefaultTheme}
         playingAs={playerColor}
         highlightedSquares={highlightedSquares}
         onSquareClick={fromPos => {
@@ -175,7 +173,6 @@ export function GamePage() {
       />
       <ChoosePromotionDialog
         color={playerColor}
-        Theme={DefaultTheme}
         onPieceSelected={pieceType => {
           if (!promotionFromTo) {
             console.error('invalid state!')

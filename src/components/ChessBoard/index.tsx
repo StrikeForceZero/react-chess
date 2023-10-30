@@ -8,7 +8,6 @@ import { isColoredPieceContainer } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { assertExhaustive } from '../../engine/src/utils/assert';
 import { ChessBoardSquare } from '../ChessBoardSquare';
-import { Theme } from '../../theme';
 
 export function flipBoardVertically(squares: BoardSquare[]): BoardSquare[] {
   return flipBoardHorizontally(squares).reverse();
@@ -41,7 +40,6 @@ export type OnSquareClickHandler = (pos: BoardPosition) => void;
 
 export function ChessBoard(props: {
   board: Board,
-  theme: Theme,
   playingAs: PieceColor,
   highlightedSquares: BoardPosition[],
   onSquareClick: OnSquareClickHandler,
@@ -53,7 +51,6 @@ export function ChessBoard(props: {
       key={s.pos.toString()}
       piece={s.piece}
       pos={s.pos}
-      theme={props.theme}
       showLabels={true}
       isHighlighted={(!!selected && s.pos.isEqual(selected)) || props.highlightedSquares.map(String).includes(s.pos.toString())}
       divProps={{

@@ -3,24 +3,24 @@ import { toIndex as boardFileToIndex } from '../../engine/src/board/BoardFile';
 import { toIndex as boardRankToIndex } from '../../engine/src/board/BoardRank';
 import { ChessPiece } from '../../engine/src/piece/ChessPiece';
 import { chessPieceToUnicode } from '../../engine/src/utils/print/unicode';
-import { Theme } from '../../theme';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
+import { useThemeContext } from '../../theme/ThemeContext';
 import styles from './styles.module.css';
 
 export function ChessBoardSquare(props: {
   piece: ChessPiece,
   pos: BoardPosition,
-  theme: Theme,
   isHighlighted?: boolean,
   // TODO: default to true
   showLabels: boolean,
   divProps?: HTMLProps<HTMLDivElement>
 }) {
+  const { theme } = useThemeContext();
   let backgroundColor = (
     boardFileToIndex(props.pos.file) + boardRankToIndex(props.pos.rank)
-  ) % 2 === 0 ? props.theme.LightSquareColor : props.theme.DarkSquareColor;
+  ) % 2 === 0 ? theme.LightSquareColor : theme.DarkSquareColor;
   if (props.isHighlighted) {
-    backgroundColor = props.theme.HighlightSquareColor;
+    backgroundColor = theme.HighlightSquareColor;
   }
 
   return (

@@ -1,6 +1,5 @@
 import { HTMLProps } from 'react';
 import { ChessBoardSquare } from '../ChessBoardSquare';
-import { Theme } from '../../theme';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { from } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
@@ -13,7 +12,6 @@ export type OnPieceSelectedHandler = (pieceType: PieceType) => void;
 export function ChoosePromotionDialog(
   props: {
     color: PieceColor,
-    Theme: Theme,
     onPieceSelected: OnPieceSelectedHandler,
     divProps?: HTMLProps<HTMLDivElement>
   },
@@ -24,7 +22,6 @@ export function ChoosePromotionDialog(
       key={pieceType}
       piece={from(props.color, pieceType)}
       pos={BoardPosition.fromString(`a${ix+1}`)}
-      theme={props.Theme}
       showLabels={false}
       divProps={{
         ...props.divProps,
