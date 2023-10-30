@@ -106,6 +106,11 @@ export function GamePage() {
     game,
   ]);
 
+  // TODO: might not be needed
+  useEffect(() => {
+    updateFen('game change', serialize(game.current.gameState))
+  }, [game, updateFen]);
+
   useEffect(() => {
     if (isGameOver(game.current.gameState)) {
       return;
@@ -152,8 +157,9 @@ export function GamePage() {
   const isInGameOverState = isGameOver(game.current.gameState);
 
   const resetGame = useCallback(() => {
-    updateFen('reset button', StandardStartPositionFEN, true);
-  }, [updateFen]);
+    updateFen('reset button', StandardStartPositionFEN, false);
+    game.current = new Game();
+  }, [game, updateFen]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomFenString(e.currentTarget.value);
