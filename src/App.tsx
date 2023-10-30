@@ -62,7 +62,7 @@ function App() {
       }
     } else {
       setPromotionFromTo(null);
-      updateFen();
+      updateFen('player execMove');
     }
     setHighlightedSquares([from, to]);
   });
@@ -71,13 +71,22 @@ function App() {
   const [currentFenString, setCurrentFenString] = useState(serialize(game.current.gameState));
   const [customFenString, setCustomFenString] = useState<string>(currentFenString);
 
-  function updateFen(fenString: string = serialize(game.current.gameState), allowLoading = false) {
-    console.log('updating fen: ', fenString);
+  // TODO: hack?
+  const currentFenStringRef = useRef(currentFenString); // useRef to keep track of the latest value
+  useEffect(() => {
+    currentFenStringRef.current = currentFenString; // Update the ref every time currentFenString changes
+  }, [currentFenString]);
+
+  function updateFen(context: string, fenString: string = serialize(game.current.gameState), allowLoading = false) {
+    console.log(`[${context}] updating fen: ${fenString}`);
     if (!isFen(fenString)) {
       throw new Error(`invalid fen string! ${fenString}`);
     }
     // by not setting the current fen, we will let the location.hash update handler load the game state
     if (!allowLoading) {
+      // TODO: hack?
+      // make sure the reference is updated immediately so the window.location.hash update doesn't think it needs to overwrite the state
+      currentFenStringRef.current = fenString;
       setCurrentFenString(fenString);
       setCustomFenString(fenString);
     }
@@ -95,7 +104,7 @@ function App() {
       if (moveResult.isOk()) {
         const move = moveResult.unwrap();
         setHighlightedSquares([move.fromPos, move.toPos]);
-        updateFen();
+        updateFen('bot after handleTurn');
       }
       forceRender();
     }
@@ -109,14 +118,14 @@ function App() {
         console.error(`invalid fen string!: ${fenString}`);
         return;
       }
-      if (fenString === currentFenString) {
+      if (fenString === currentFenStringRef.current) {
         return;
       }
-      console.log('updated game from url fen: ', fenString);
-      updateFen(fenString, false);
+      console.log(`updated game from url fen: ${currentFenStringRef.current} -> ${fenString}`);
+      updateFen('handleHashChange', fenString, false);
       Object.assign(game.current.gameState, deserialize(fenString));
       // TODO: we could probably go back to having game and bot being state?
-      forceRender();
+      // forceRender();
     };
 
     // Attach the event handler
@@ -126,14 +135,14 @@ function App() {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  }, [currentFenString]);
+  }, []);
 
   const isInGameOverState = isGameOver(game.current.gameState);
   return (
     <div className="App">
       <button
         onClick={() => {
-          updateFen(StandardStartPositionFEN, true);
+          updateFen('reset button', StandardStartPositionFEN, true);
         }}
       >
         Reset Game
@@ -148,7 +157,7 @@ function App() {
           onChange={e => setCustomFenString(e.currentTarget.value)}
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              updateFen(e.currentTarget.value, true)
+              updateFen('user input', e.currentTarget.value, true)
             }
           }}
         />
