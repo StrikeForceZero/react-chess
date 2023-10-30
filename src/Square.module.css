@@ -1,0 +1,16 @@
+.square {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5rem;
+  height: 5rem;
+  font-size: 5rem;
+}
+
+.square_label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 1rem;
+}

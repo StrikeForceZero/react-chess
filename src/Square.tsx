@@ -1,0 +1,20 @@
+import { toIndex as boardFileToIndex } from './engine/src/board/BoardFile';
+import { toIndex as boardRankToIndex } from './engine/src/board/BoardRank';
+import { ChessPiece } from './engine/src/piece/ChessPiece';
+import { chessPieceToUnicode } from './engine/src/utils/print/unicode';
+import { Theme } from './theme';
+import { BoardPosition } from './engine/src/board/BoardPosition';
+import styles from './Square.module.css';
+
+export function Square(props: {
+  piece: ChessPiece,
+  pos: BoardPosition,
+  theme: Theme,
+}) {
+  const backgroundColor = (
+    boardFileToIndex(props.pos.file) + boardRankToIndex(props.pos.rank)
+  ) % 2 === 0 ? props.theme.LightSquareColor : props.theme.DarkSquareColor;
+  return (
+    <div className={styles.square} style={{backgroundColor}}><span className={styles.square_label}>{props.pos.toString()}</span>{chessPieceToUnicode(props.piece)}</div>
+  );
+}
