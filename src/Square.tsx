@@ -12,6 +12,8 @@ export function Square(props: {
   pos: BoardPosition,
   theme: Theme,
   isHighlighted?: boolean,
+  // TODO: default to true
+  showLabels: boolean,
   divProps?: HTMLProps<HTMLDivElement>
 }) {
   let backgroundColor = (
@@ -22,6 +24,6 @@ export function Square(props: {
   }
 
   return (
-    <div className={styles.square} style={{backgroundColor}} {...props.divProps}><span className={styles.square_label}>{props.pos.toString()}</span>{chessPieceToUnicode(props.piece)}</div>
+    <div className={styles.square} style={{backgroundColor}} {...props.divProps}><span className={styles.square_label} hidden={!props.showLabels}>{props.pos.toString()}</span>{chessPieceToUnicode(props.piece)}</div>
   );
 }

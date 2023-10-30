@@ -54,6 +54,7 @@ export function ChessBoard(props: {
       piece={s.piece}
       pos={s.pos}
       theme={props.theme}
+      showLabels={true}
       isHighlighted={(!!selected && s.pos.isEqual(selected)) || props.highlightedSquares.map(String).includes(s.pos.toString())}
       divProps={{
         onClick: () => {
