@@ -16,6 +16,7 @@ import {
   PieceColor,
 } from './engine/src/piece/PieceColor';
 import { GameStatus } from './engine/src/state/GameStatus';
+import { isGameOver } from './engine/src/state/utils/GameStatusUtils';
 import { DefaultTheme } from './theme';
 
 function useForceRender() {
@@ -31,6 +32,9 @@ function App() {
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
   const forceRender = useForceRender();
   useEffect(() => {
+    if (isGameOver(game.current.gameState)) {
+      return;
+    }
     if (game.current.gameState.activeColor !== playerColor) {
       const moveResult = bot.current.handleTurn();
       if (moveResult.isOk()) {
