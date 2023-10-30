@@ -47,10 +47,16 @@ function App() {
       }
     } else {
       setPromotionFromTo(null);
+      updateFen();
     }
     setHighlightedSquares([from, to]);
   });
   const forceRender = useForceRender();
+
+  function updateFen() {
+    window.location.hash = encodeURIComponent(currentFenString);
+  }
+
   useEffect(() => {
     if (isGameOver(game.current.gameState)) {
       return;
@@ -60,6 +66,7 @@ function App() {
       if (moveResult.isOk()) {
         const move = moveResult.unwrap();
         setHighlightedSquares([move.fromPos, move.toPos]);
+        updateFen();
       }
       forceRender();
     }
@@ -93,8 +100,6 @@ function App() {
   }, [currentFenString]);
 
   const isInGameOverState = isGameOver(game.current.gameState);
-
-  window.location.hash = encodeURIComponent(currentFenString);
   return (
     <div className="App">
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
