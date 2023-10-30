@@ -42,6 +42,8 @@ function App() {
   }, [game.gameState.activeColor]);
   return (
     <div className="App">
+      <div>{GameStatus[game.gameState.gameStatus]}</div>
+      <div>{serialize(game.gameState)}</div>
       <ChessBoard
         board={game.gameState.board}
         theme={DefaultTheme}
