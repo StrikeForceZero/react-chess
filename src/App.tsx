@@ -9,7 +9,7 @@ function App() {
   const [game] = useState(new Game());
   return (
     <div className="App">
-      <ChessBoard board={game.gameState.board} theme={DefaultTheme} playingAs={PieceColor.White} />
+      <ChessBoard board={game.gameState.board} theme={DefaultTheme} playingAs={PieceColor.White} onMove={(from, to) => game.move(from, to)} />
     </div>
   );
 }
