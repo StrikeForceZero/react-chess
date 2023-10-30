@@ -89,8 +89,9 @@ function App() {
       currentFenStringRef.current = fenString;
       setCurrentFenString(fenString);
       setCustomFenString(fenString);
+    } else {
+      setHighlightedSquares([]);
     }
-    setHighlightedSquares([]);
     setPromotionFromTo(null);
     window.location.hash = encodeURIComponent(fenString);
   }
