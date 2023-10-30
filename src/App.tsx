@@ -8,12 +8,12 @@ import { ChessBoard } from './ChessBoard';
 import { ChoosePromotionDialog } from './ChoosePromotionDialog';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { RandomBot } from './engine/src/bots/RandomBot';
+import { deserializerWithStatus } from './engine/src/fen/deserializerWithStatus';
 import {
   isFen,
   StandardStartPositionFEN,
 } from './engine/src/fen/FENString';
 import { serialize } from './engine/src/fen/serialize';
-import { deserialize } from './engine/src/fen/deserializer';
 import { Game } from './engine/src/game/Game';
 import { resolveMoves } from './engine/src/move/PieceMoveMap';
 import { isColoredPieceContainer } from './engine/src/piece/ChessPiece';
@@ -44,7 +44,7 @@ function App() {
       console.error(`invalid fen string: ${fenString}`);
       return game;
     }
-    Object.assign(game.gameState, deserialize(fenString, true));
+    Object.assign(game.gameState, deserializerWithStatus(fenString, true));
     return game;
   })());
   const playerColor = PieceColor.White;
@@ -124,7 +124,7 @@ function App() {
       }
       console.log(`updated game from url fen: ${currentFenStringRef.current} -> ${fenString}`);
       updateFen('handleHashChange', fenString, false);
-      Object.assign(game.current.gameState, deserialize(fenString, true));
+      Object.assign(game.current.gameState, deserializerWithStatus(fenString, true));
       // TODO: we could probably go back to having game and bot being state?
       // forceRender();
     };
