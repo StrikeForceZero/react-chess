@@ -53,13 +53,13 @@ const useGameInitialization = (): MutableRefObject<Game> => {
   return game;
 };
 
-const useBot = (playerColor: PieceColor): AbstractBot => {
-  const [bot, setBot] = useState<AbstractBot>(new RandomBot(InverseColorMap[playerColor]));
+const useBot = (botColor: PieceColor): AbstractBot => {
+  const [bot, setBot] = useState<AbstractBot>(new RandomBot(botColor));
 
   useEffect(() => {
     console.log('reload bot');
-    setBot(new RandomBot(InverseColorMap[playerColor]));
-  }, [playerColor]);
+    setBot(new RandomBot(botColor));
+  }, [botColor]);
 
   return bot;
 };
@@ -75,7 +75,7 @@ function useExternallyMutableRef<T>(value: T): MutableRefObject<T> {
 export function GamePage() {
   const game = useGameInitialization();
   const playerColor = PieceColor.White;
-  const bot = useBot(playerColor);
+  const bot = useBot(InverseColorMap[playerColor]);
 
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
   const [promotionFromTo, setPromotionFromTo] = useState<[BoardPosition, BoardPosition] | null>(null);
