@@ -1,5 +1,5 @@
 import { HTMLProps } from 'react';
-import { Square } from '../Square/Square';
+import { Square } from '../ChessBoard/Square';
 import { Theme } from '../../theme';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { from } from '../../engine/src/piece/ChessPiece';

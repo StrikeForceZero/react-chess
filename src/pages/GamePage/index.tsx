@@ -3,8 +3,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ChessBoard } from '../../ChessBoard/ChessBoard';
-import { ChoosePromotionDialog } from '../../ChessBoard/ChoosePromotionDialog/ChoosePromotionDialog';
+import { ChessBoard } from '../../components/ChessBoard';
+import { ChoosePromotionDialog } from '../../components/ChoosePromotionDialog';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { RandomBot } from '../../engine/src/bots/RandomBot';
 import { deserializerWithStatus } from '../../engine/src/fen/deserializerWithStatus';
