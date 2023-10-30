@@ -7,7 +7,9 @@ import './App.css';
 import { ChessBoard } from './ChessBoard';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { RandomBot } from './engine/src/bots/RandomBot';
+import { isFen } from './engine/src/fen/FENString';
 import { serialize } from './engine/src/fen/serialize';
+import { deserialize } from './engine/src/fen/deserializer';
 import { Game } from './engine/src/game/Game';
 import { resolveMoves } from './engine/src/move/PieceMoveMap';
 import { isColoredPieceContainer } from './engine/src/piece/ChessPiece';
@@ -44,10 +46,38 @@ function App() {
       forceRender();
     }
   }, [game.current.gameState.activeColor]);
+
+  const currentFenString = serialize(game.current.gameState);
+  useEffect(() => {
+    // Define the event handler
+    const handleHashChange = () => {
+      const fenString = decodeURIComponent(window.location.hash).slice(1);
+      if (!isFen(fenString)) {
+        console.error(`invalid fen string!: ${fenString}`);
+        return;
+      }
+      if (fenString === currentFenString) {
+        return;
+      }
+      console.log('updated game from url fen: ', fenString);
+      Object.assign(game.current.gameState, deserialize(fenString));
+      // TODO: we could probably go back to having game and bot being state?
+      forceRender();
+    };
+
+    // Attach the event handler
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Clean up the event handler when the component unmounts
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [currentFenString]);
+  window.location.hash = encodeURIComponent(currentFenString);
   return (
     <div className="App">
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
-      <div>{serialize(game.current.gameState)}</div>
+      <div>{currentFenString}</div>
       <ChessBoard
         board={game.current.gameState.board}
         theme={DefaultTheme}
