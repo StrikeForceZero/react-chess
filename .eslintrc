@@ -3,5 +3,6 @@
   "extends": [
     "react-app",
     "react-app/jest"
-  ]
+  ],
+  "ignorePatterns": ["src/engine/"]
 }
