@@ -6,6 +6,15 @@
   width: 5rem;
   height: 5rem;
   font-size: 5rem;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE/Edge */
+  user-select: none;         /* Standard */
+}
+
+.square:hover {
+  cursor: pointer;
 }
 
 .square_label {
