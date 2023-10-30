@@ -80,6 +80,8 @@ function App() {
       setCurrentFenString(fenString);
       setCustomFenString(fenString);
     }
+    setHighlightedSquares([]);
+    setPromotionFromTo(null);
     window.location.hash = encodeURIComponent(fenString);
   }
 
@@ -128,6 +130,13 @@ function App() {
   const isInGameOverState = isGameOver(game.current.gameState);
   return (
     <div className="App">
+      <button
+        onClick={() => {
+          updateFen(StandardStartPositionFEN, true);
+        }}
+      >
+        Reset Game
+      </button>
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
       <div>
