@@ -11,13 +11,13 @@ export function Square(props: {
   piece: ChessPiece,
   pos: BoardPosition,
   theme: Theme,
-  isSelected?: boolean,
+  isHighlighted?: boolean,
   divProps?: HTMLProps<HTMLDivElement>
 }) {
   let backgroundColor = (
     boardFileToIndex(props.pos.file) + boardRankToIndex(props.pos.rank)
   ) % 2 === 0 ? props.theme.LightSquareColor : props.theme.DarkSquareColor;
-  if (props.isSelected) {
+  if (props.isHighlighted) {
     backgroundColor = props.theme.HighlightSquareColor;
   }
 

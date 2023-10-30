@@ -3,6 +3,7 @@ import styles from './ChessBoard.module.css';
 import { Board } from './engine/src/board/Board';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { BoardSquare } from './engine/src/board/BoardSquare';
+import { resolveMoves } from './engine/src/move/PieceMoveMap';
 import { isColoredPieceContainer } from './engine/src/piece/ChessPiece';
 import { PieceColor } from './engine/src/piece/PieceColor';
 import { assertExhaustive } from './engine/src/utils/assert';
@@ -36,8 +37,16 @@ export function flipBoardForColor(board: Board, color: PieceColor): BoardSquare[
 }
 
 export type OnMoveHandler = (fromPos: BoardPosition, toPos: BoardPosition) => void;
+export type OnSquareClickHandler = (pos: BoardPosition) => void;
 
-export function ChessBoard(props: { board: Board, theme: Theme, playingAs: PieceColor, onMove: OnMoveHandler }) {
+export function ChessBoard(props: {
+  board: Board,
+  theme: Theme,
+  playingAs: PieceColor,
+  highlightedSquares: BoardPosition[],
+  onSquareClick: OnSquareClickHandler,
+  onMove: OnMoveHandler,
+}) {
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
     <Square
@@ -45,7 +54,7 @@ export function ChessBoard(props: { board: Board, theme: Theme, playingAs: Piece
       piece={s.piece}
       pos={s.pos}
       theme={props.theme}
-      isSelected={!!selected && s.pos.isEqual(selected)}
+      isHighlighted={(!!selected && s.pos.isEqual(selected)) || props.highlightedSquares.map(String).includes(s.pos.toString())}
       divProps={{
         onClick: () => {
           if (selected) {
@@ -54,11 +63,13 @@ export function ChessBoard(props: { board: Board, theme: Theme, playingAs: Piece
               const targetPiece = props.board.getPieceFromPos(s.pos);
               if (!isColoredPieceContainer(targetPiece) || targetPiece.coloredPiece.color !== props.playingAs) {
                 props.onMove(selected, s.pos);
+                setSelected(s.pos);
                 return;
               }
             }
           }
           setSelected(s.pos);
+          props.onSquareClick(s.pos);
         },
       }}
     />));
