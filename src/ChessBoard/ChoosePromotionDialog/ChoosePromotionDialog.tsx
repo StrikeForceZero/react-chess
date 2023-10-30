@@ -1,10 +1,10 @@
 import { HTMLProps } from 'react';
-import { Square } from './Square';
-import { Theme } from './theme';
-import { BoardPosition } from './engine/src/board/BoardPosition';
-import { from } from './engine/src/piece/ChessPiece';
-import { PieceColor } from './engine/src/piece/PieceColor';
-import { PieceType } from './engine/src/piece/PieceType';
+import { Square } from '../Square/Square';
+import { Theme } from '../../theme';
+import { BoardPosition } from '../../engine/src/board/BoardPosition';
+import { from } from '../../engine/src/piece/ChessPiece';
+import { PieceColor } from '../../engine/src/piece/PieceColor';
+import { PieceType } from '../../engine/src/piece/PieceType';
 
 import styles from './ChoosePromotionDialog.module.css';
 

@@ -1,10 +1,10 @@
 import { HTMLProps } from 'react';
-import { toIndex as boardFileToIndex } from './engine/src/board/BoardFile';
-import { toIndex as boardRankToIndex } from './engine/src/board/BoardRank';
-import { ChessPiece } from './engine/src/piece/ChessPiece';
-import { chessPieceToUnicode } from './engine/src/utils/print/unicode';
-import { Theme } from './theme';
-import { BoardPosition } from './engine/src/board/BoardPosition';
+import { toIndex as boardFileToIndex } from '../../engine/src/board/BoardFile';
+import { toIndex as boardRankToIndex } from '../../engine/src/board/BoardRank';
+import { ChessPiece } from '../../engine/src/piece/ChessPiece';
+import { chessPieceToUnicode } from '../../engine/src/utils/print/unicode';
+import { Theme } from '../../theme';
+import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import styles from './Square.module.css';
 
 export function Square(props: {

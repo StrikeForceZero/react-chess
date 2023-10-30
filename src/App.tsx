@@ -4,8 +4,8 @@ import React, {
   useState,
 } from 'react';
 import './App.css';
-import { ChessBoard } from './ChessBoard';
-import { ChoosePromotionDialog } from './ChoosePromotionDialog';
+import { ChessBoard } from './ChessBoard/ChessBoard';
+import { ChoosePromotionDialog } from './ChessBoard/ChoosePromotionDialog/ChoosePromotionDialog';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { RandomBot } from './engine/src/bots/RandomBot';
 import { deserializerWithStatus } from './engine/src/fen/deserializerWithStatus';

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import styles from './ChessBoard.module.css';
-import { Board } from './engine/src/board/Board';
-import { BoardPosition } from './engine/src/board/BoardPosition';
-import { BoardSquare } from './engine/src/board/BoardSquare';
-import { resolveMoves } from './engine/src/move/PieceMoveMap';
-import { isColoredPieceContainer } from './engine/src/piece/ChessPiece';
-import { PieceColor } from './engine/src/piece/PieceColor';
-import { assertExhaustive } from './engine/src/utils/assert';
-import { Square } from './Square';
-import { Theme } from './theme';
+import { Board } from '../engine/src/board/Board';
+import { BoardPosition } from '../engine/src/board/BoardPosition';
+import { BoardSquare } from '../engine/src/board/BoardSquare';
+import { resolveMoves } from '../engine/src/move/PieceMoveMap';
+import { isColoredPieceContainer } from '../engine/src/piece/ChessPiece';
+import { PieceColor } from '../engine/src/piece/PieceColor';
+import { assertExhaustive } from '../engine/src/utils/assert';
+import { Square } from './Square/Square';
+import { Theme } from '../theme';
 
 export function flipBoardVertically(squares: BoardSquare[]): BoardSquare[] {
   return flipBoardHorizontally(squares).reverse();
