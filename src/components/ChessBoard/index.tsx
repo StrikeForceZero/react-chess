@@ -7,7 +7,7 @@ import { resolveMoves } from '../../engine/src/move/PieceMoveMap';
 import { isColoredPieceContainer } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { assertExhaustive } from '../../engine/src/utils/assert';
-import { Square } from './Square';
+import { ChessBoardSquare } from '../ChessBoardSquare';
 import { Theme } from '../../theme';
 
 export function flipBoardVertically(squares: BoardSquare[]): BoardSquare[] {
@@ -49,7 +49,7 @@ export function ChessBoard(props: {
 }) {
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
-    <Square
+    <ChessBoardSquare
       key={s.pos.toString()}
       piece={s.piece}
       pos={s.pos}

@@ -1,5 +1,5 @@
 import { HTMLProps } from 'react';
-import { Square } from '../ChessBoard/Square';
+import { ChessBoardSquare } from '../ChessBoardSquare';
 import { Theme } from '../../theme';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { from } from '../../engine/src/piece/ChessPiece';
@@ -20,7 +20,7 @@ export function ChoosePromotionDialog(
 ) {
   const pieces = Object.values(PieceType).filter(p => p !== PieceType.Pawn && p !== PieceType.King);
   const coloredPieces = pieces.map((pieceType, ix) => (
-    <Square
+    <ChessBoardSquare
       key={pieceType}
       piece={from(props.color, pieceType)}
       pos={BoardPosition.fromString(`a${ix+1}`)}
