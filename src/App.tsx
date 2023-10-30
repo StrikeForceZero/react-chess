@@ -31,9 +31,7 @@ function App() {
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
   const forceRender = useForceRender();
   useEffect(() => {
-    console.log('check if bots turn');
     if (game.current.gameState.activeColor !== playerColor) {
-      console.log('bots turn');
       const moveResult = bot.current.handleTurn();
       if (moveResult.isOk()) {
         // TODO: handleTurn should return something useful for us to render
