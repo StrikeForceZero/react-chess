@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import './App.css';
@@ -24,44 +25,44 @@ function useForceRender() {
 
 
 function App() {
-  const [game] = useState(new Game());
+  const game = useRef(new Game());
   const playerColor = PieceColor.White;
-  const [bot] = useState(new RandomBot(InverseColorMap[playerColor], game));
+  const bot = useRef(new RandomBot(InverseColorMap[playerColor], game.current));
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
   const forceRender = useForceRender();
   useEffect(() => {
     console.log('check if bots turn');
-    if (game.gameState.activeColor !== playerColor) {
+    if (game.current.gameState.activeColor !== playerColor) {
       console.log('bots turn');
-      const moveResult = bot.handleTurn();
+      const moveResult = bot.current.handleTurn();
       if (moveResult.isOk()) {
         // TODO: handleTurn should return something useful for us to render
-        forceRender();
       }
+      forceRender();
     }
-  }, [game.gameState.activeColor]);
+  }, [game.current.gameState.activeColor]);
   return (
     <div className="App">
-      <div>{GameStatus[game.gameState.gameStatus]}</div>
-      <div>{serialize(game.gameState)}</div>
+      <div>{GameStatus[game.current.gameState.gameStatus]}</div>
+      <div>{serialize(game.current.gameState)}</div>
       <ChessBoard
-        board={game.gameState.board}
+        board={game.current.gameState.board}
         theme={DefaultTheme}
         playingAs={playerColor}
         highlightedSquares={highlightedSquares}
         onSquareClick={fromPos => {
-          const movingPiece = game.gameState.board.getPieceFromPos(fromPos);
+          const movingPiece = game.current.gameState.board.getPieceFromPos(fromPos);
           if (!isColoredPieceContainer(movingPiece)){
             setHighlightedSquares([]);
             return;
           }
           const moves = resolveMoves(movingPiece.coloredPiece.pieceType, movingPiece.coloredPiece.color);
-          const validMoves = moves.map(move => move.getValidMovesForPosition(game.gameState, fromPos));
+          const validMoves = moves.map(move => move.getValidMovesForPosition(game.current.gameState, fromPos));
           const allValidMoveTargetPositions = validMoves.flatMap(executableMoves => executableMoves.map(em => em.toPos));
           setHighlightedSquares(allValidMoveTargetPositions);
         }}
         onMove={(from, to) => {
-          game.move(from, to);
+          game.current.move(from, to);
           setHighlightedSquares([from, to]);
         }}
       />
