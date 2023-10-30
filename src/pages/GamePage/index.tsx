@@ -83,6 +83,10 @@ function useExternallyMutableRef<T>(value: T): MutableRefObject<T> {
 
 export function GamePage() {
   const game = useGameInitialization();
+  // TODO: this only used so the bots will automatically start moving when the game state has been reset
+  // previously they would only resume if the active color changed
+  // this might even cause side effects and needs investigation
+  const currentGame = game.current;
   const playerColor = PieceColor.White;
   const whiteBot = useBot(PieceColor.White);
   const blackBot = useBot(InverseColorMap[whiteBot.playAsColor]);
@@ -143,18 +147,18 @@ export function GamePage() {
   }, [game, updateFen, botDelayMs]);
 
   useEffect(() => {
-    if (isGameOver(game.current.gameState)) {
+    if (isGameOver(currentGame.gameState)) {
       return;
     }
     let cancelBotMove = () => {};
-    if (whitePlayerType === PlayerType.Bot && game.current.gameState.activeColor === whiteBot.playAsColor) {
+    if (whitePlayerType === PlayerType.Bot && currentGame.gameState.activeColor === whiteBot.playAsColor) {
       cancelBotMove = handleBotMove(whiteBot);
     }
-    if (blackPlayerType === PlayerType.Bot && game.current.gameState.activeColor === blackBot.playAsColor) {
+    if (blackPlayerType === PlayerType.Bot && currentGame.gameState.activeColor === blackBot.playAsColor) {
       cancelBotMove = handleBotMove(blackBot);
     }
     return () => cancelBotMove();
-  }, [game, whiteBot, blackBot, game.current.gameState.activeColor, whitePlayerType, blackPlayerType, handleBotMove]);
+  }, [whiteBot, blackBot, currentGame, currentGame.gameState.activeColor, whitePlayerType, blackPlayerType, handleBotMove]);
 
   useEffect(() => {
     // Define the event handler
