@@ -2,9 +2,9 @@ import { HTMLProps } from 'react';
 import { toIndex as boardFileToIndex } from '../../engine/src/board/BoardFile';
 import { toIndex as boardRankToIndex } from '../../engine/src/board/BoardRank';
 import { ChessPiece } from '../../engine/src/piece/ChessPiece';
-import { chessPieceToUnicode } from '../../engine/src/utils/print/unicode';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { useThemeContext } from '../../theme/ThemeContext';
+import { ChessBoardPiece } from '../ChessBoardPiece';
 import styles from './styles.module.css';
 
 export function ChessBoardSquare(props: {
@@ -24,6 +24,18 @@ export function ChessBoardSquare(props: {
   }
 
   return (
-    <div className={styles.square} style={{backgroundColor}} {...props.divProps}><span className={styles.square_label} hidden={!props.showLabels}>{props.pos.toString()}</span>{chessPieceToUnicode(props.piece)}</div>
+    <div
+      className={styles.square}
+      style={{backgroundColor}}
+      {...props.divProps}
+    >
+      <span
+        className={styles.square_label}
+        hidden={!props.showLabels}
+      >
+        {props.pos.toString()}
+      </span>
+      <ChessBoardPiece piece={props.piece} />
+    </div>
   );
 }
