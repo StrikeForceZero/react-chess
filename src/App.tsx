@@ -34,7 +34,8 @@ function App() {
     if (game.current.gameState.activeColor !== playerColor) {
       const moveResult = bot.current.handleTurn();
       if (moveResult.isOk()) {
-        // TODO: handleTurn should return something useful for us to render
+        const move = moveResult.unwrap();
+        setHighlightedSquares([move.fromPos, move.toPos]);
       }
       forceRender();
     }
