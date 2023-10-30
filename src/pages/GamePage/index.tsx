@@ -7,6 +7,14 @@ import React, {
 } from 'react';
 import { ChessBoard } from '../../components/ChessBoard';
 import { ChoosePromotionDialog } from '../../components/ChoosePromotionDialog';
+import {
+  CustomizableSelect,
+  SimpleOptions,
+} from '../../components/CustomizableSelect';
+import {
+  PlayerType,
+  PlayerTypeSelector,
+} from '../../components/PlayerTypeSelector';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { AbstractBot } from '../../engine/src/bots/AbstractBot';
 import { RandomBot } from '../../engine/src/bots/RandomBot';
@@ -26,6 +34,7 @@ import {
 import { PieceType } from '../../engine/src/piece/PieceType';
 import { GameStatus } from '../../engine/src/state/GameStatus';
 import { isGameOver } from '../../engine/src/state/utils/GameStatusUtils';
+import { assertExhaustive } from '../../engine/src/utils/assert';
 import { PromotionRequiredError } from '../../engine/src/utils/errors/PromotionRequiredError';
 
 const useGameInitialization = (): MutableRefObject<Game> => {
@@ -75,8 +84,12 @@ function useExternallyMutableRef<T>(value: T): MutableRefObject<T> {
 export function GamePage() {
   const game = useGameInitialization();
   const playerColor = PieceColor.White;
-  const bot = useBot(InverseColorMap[playerColor]);
+  const whiteBot = useBot(PieceColor.White);
+  const blackBot = useBot(InverseColorMap[whiteBot.playAsColor]);
 
+  const [whitePlayerType, setWhitePlayerType] = useState(PlayerType.Human);
+  const [blackPlayerType, setBlackPlayerType] = useState(PlayerType.Bot);
+  const [botDelayMs, setBotDelayMs] = useState(0);
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
   const [promotionFromTo, setPromotionFromTo] = useState<[BoardPosition, BoardPosition] | null>(null);
   const [currentFenString, setCurrentFenString] = useState(serialize(game.current.gameState));
@@ -103,6 +116,7 @@ export function GamePage() {
     setPromotionFromTo(null);
     window.location.hash = encodeURIComponent(fenString);
   }, [
+    currentFenStringRef,
     game,
   ]);
 
@@ -111,20 +125,36 @@ export function GamePage() {
     updateFen('game change', serialize(game.current.gameState))
   }, [game, updateFen]);
 
-  useEffect(() => {
-    if (isGameOver(game.current.gameState)) {
-      return;
-    }
-    if (game.current.gameState.activeColor !== playerColor) {
-      console.log('bot preparing move: ', serialize(game.current.gameState));
+  const handleBotMove = useCallback((bot: AbstractBot) => {
+    console.log(`${bot.playAsColor} bot preparing move: `, serialize(game.current.gameState));
+    const timeoutId = setTimeout(() => {
+      if (isGameOver(game.current.gameState) || game.current.gameState.activeColor !== bot.playAsColor) {
+        console.warn('no longer bots turn');
+        return;
+      }
       const moveResult = bot.handleTurn(game.current);
       if (moveResult.isOk()) {
         const move = moveResult.unwrap();
         setHighlightedSquares([move.fromPos, move.toPos]);
-        updateFen('bot after handleTurn');
+        updateFen(`${bot.playAsColor} bot after handleTurn`);
       }
+    }, botDelayMs)
+    return () => clearTimeout(timeoutId);
+  }, [game, updateFen, botDelayMs]);
+
+  useEffect(() => {
+    if (isGameOver(game.current.gameState)) {
+      return;
     }
-  }, [game, bot, game.current.gameState.activeColor, playerColor, updateFen]);
+    let cancelBotMove = () => {};
+    if (whitePlayerType === PlayerType.Bot && game.current.gameState.activeColor === whiteBot.playAsColor) {
+      cancelBotMove = handleBotMove(whiteBot);
+    }
+    if (blackPlayerType === PlayerType.Bot && game.current.gameState.activeColor === blackBot.playAsColor) {
+      cancelBotMove = handleBotMove(blackBot);
+    }
+    return () => cancelBotMove();
+  }, [game, whiteBot, blackBot, game.current.gameState.activeColor, whitePlayerType, blackPlayerType, handleBotMove]);
 
   useEffect(() => {
     // Define the event handler
@@ -216,8 +246,35 @@ export function GamePage() {
     handleMove(...promotionFromTo, pieceType);
   }, [handleMove, promotionFromTo]);
 
+  const handlePlayerTypeChange = useCallback((color: PieceColor, playerType: PlayerType) => {
+    switch (color) {
+      case PieceColor.White:
+        setWhitePlayerType(playerType);
+        break;
+      case PieceColor.Black:
+        setBlackPlayerType(playerType);
+        break;
+      default: return assertExhaustive(color);
+    }
+  }, []);
+
+  const handlePlayerTypeChangeWhite = useCallback((playerType: PlayerType) => {
+    handlePlayerTypeChange(PieceColor.White, playerType);
+  }, [handlePlayerTypeChange]);
+
+  const handlePlayerTypeChangeBlack = useCallback((playerType: PlayerType) => {
+    handlePlayerTypeChange(PieceColor.Black, playerType);
+  }, [handlePlayerTypeChange]);
+
+  const handleBotDelayMsChange = useCallback((botDelay: number) => {
+    setBotDelayMs(botDelay);
+  }, []);
+
   return (
     <div className="App">
+      <PlayerTypeSelector id={'player_type_white'} label={'White Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeWhite} value={whitePlayerType} />
+      <PlayerTypeSelector id={'player_type_black'} label={'Black Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeBlack} value={blackPlayerType} />
+      <CustomizableSelect id={'bot_delay_ms'} label={'Bot Move Delay MS'} options={SimpleOptions([0, 100, 500, 1000])} defaultValue={botDelayMs} value={botDelayMs} onSelectedValueChange={handleBotDelayMsChange} />
       <button onClick={resetGame}>Reset Game</button>
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
