@@ -73,10 +73,14 @@ function App() {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, [currentFenString]);
+
+  const isInGameOverState = isGameOver(game.current.gameState);
+
   window.location.hash = encodeURIComponent(currentFenString);
   return (
     <div className="App">
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
+      <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
       <div>{currentFenString}</div>
       <ChessBoard
         board={game.current.gameState.board}
