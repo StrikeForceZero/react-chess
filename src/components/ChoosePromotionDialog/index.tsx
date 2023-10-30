@@ -6,7 +6,7 @@ import { from } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { PieceType } from '../../engine/src/piece/PieceType';
 
-import styles from './ChoosePromotionDialog.module.css';
+import styles from './styles.module.css';
 
 export type OnPieceSelectedHandler = (pieceType: PieceType) => void;
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './ChessBoard.module.css';
+import styles from './styles.module.css';
 import { Board } from '../../engine/src/board/Board';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { BoardSquare } from '../../engine/src/board/BoardSquare';

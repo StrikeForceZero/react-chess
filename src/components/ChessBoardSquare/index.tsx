@@ -5,7 +5,7 @@ import { ChessPiece } from '../../engine/src/piece/ChessPiece';
 import { chessPieceToUnicode } from '../../engine/src/utils/print/unicode';
 import { Theme } from '../../theme';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
-import styles from './ChessBoardSquare.module.css';
+import styles from './styles.module.css';
 
 export function ChessBoardSquare(props: {
   piece: ChessPiece,
