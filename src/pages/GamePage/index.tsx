@@ -185,6 +185,8 @@ export function GamePage() {
   }, [game, updateFen, currentFenStringRef]);
 
   const isInGameOverState = isGameOver(game.current.gameState);
+  const winningColor = game.current.gameState.gameStatus === GameStatus.Checkmate ? InverseColorMap[game.current.gameState.activeColor] : null;
+  const winningColorText = winningColor ? ` ${winningColor} Wins!` : null;
 
   const resetGame = useCallback(() => {
     updateFen('reset button', StandardStartPositionFEN, false);
@@ -276,7 +278,7 @@ export function GamePage() {
       <PlayerTypeSelector id={'player_type_black'} label={'Black Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeBlack} value={blackPlayerType} />
       <CustomizableSelect id={'bot_delay_ms'} label={'Bot Move Delay MS'} options={SimpleOptions([0, 100, 500, 1000])} defaultValue={botDelayMs} value={botDelayMs} onSelectedValueChange={handleBotDelayMsChange} />
       <button onClick={resetGame}>Reset Game</button>
-      <div>{GameStatus[game.current.gameState.gameStatus]}</div>
+      <div>{GameStatus[game.current.gameState.gameStatus]}{winningColorText}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
       <div>
         <input
