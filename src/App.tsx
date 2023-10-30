@@ -27,11 +27,6 @@ import { isGameOver } from './engine/src/state/utils/GameStatusUtils';
 import { PromotionRequiredError } from './engine/src/utils/errors/PromotionRequiredError';
 import { DefaultTheme } from './theme';
 
-function useForceRender() {
-  const [, setTick] = useState(0);
-  return () => setTick(tick => tick + 1);
-}
-
 function App() {
   const game = useRef((() => {
     // TODO: maybe this whole thing should be a function that's shared with the handleHashChange
@@ -66,7 +61,6 @@ function App() {
     }
     setHighlightedSquares([from, to]);
   });
-  const forceRender = useForceRender();
 
   const [currentFenString, setCurrentFenString] = useState(serialize(game.current.gameState));
   const [customFenString, setCustomFenString] = useState<string>(currentFenString);
