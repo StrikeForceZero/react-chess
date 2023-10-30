@@ -44,7 +44,7 @@ function App() {
       console.error(`invalid fen string: ${fenString}`);
       return game;
     }
-    Object.assign(game.gameState, deserialize(fenString));
+    Object.assign(game.gameState, deserialize(fenString, true));
     return game;
   })());
   const playerColor = PieceColor.White;
@@ -124,7 +124,7 @@ function App() {
       }
       console.log(`updated game from url fen: ${currentFenStringRef.current} -> ${fenString}`);
       updateFen('handleHashChange', fenString, false);
-      Object.assign(game.current.gameState, deserialize(fenString));
+      Object.assign(game.current.gameState, deserialize(fenString, true));
       // TODO: we could probably go back to having game and bot being state?
       // forceRender();
     };
