@@ -8,7 +8,10 @@ import { ChessBoard } from './ChessBoard';
 import { ChoosePromotionDialog } from './ChoosePromotionDialog';
 import { BoardPosition } from './engine/src/board/BoardPosition';
 import { RandomBot } from './engine/src/bots/RandomBot';
-import { isFen } from './engine/src/fen/FENString';
+import {
+  isFen,
+  StandardStartPositionFEN,
+} from './engine/src/fen/FENString';
 import { serialize } from './engine/src/fen/serialize';
 import { deserialize } from './engine/src/fen/deserializer';
 import { Game } from './engine/src/game/Game';
@@ -29,9 +32,21 @@ function useForceRender() {
   return () => setTick(tick => tick + 1);
 }
 
-
 function App() {
-  const game = useRef(new Game());
+  const game = useRef((() => {
+    // TODO: maybe this whole thing should be a function that's shared with the handleHashChange
+    const game = new Game();
+    const fenString = decodeURIComponent(window.location.hash).slice(1);
+    if (fenString.length === 0) {
+      return game;
+    }
+    if (!isFen(fenString)) {
+      console.error(`invalid fen string: ${fenString}`);
+      return game;
+    }
+    Object.assign(game.gameState, deserialize(fenString));
+    return game;
+  })());
   const playerColor = PieceColor.White;
   const bot = useRef(new RandomBot(InverseColorMap[playerColor], game.current));
   const [highlightedSquares, setHighlightedSquares] = useState<BoardPosition[]>([]);
@@ -53,8 +68,19 @@ function App() {
   });
   const forceRender = useForceRender();
 
-  function updateFen() {
-    window.location.hash = encodeURIComponent(currentFenString);
+  const [currentFenString, setCurrentFenString] = useState(serialize(game.current.gameState));
+  const [customFenString, setCustomFenString] = useState<string>(currentFenString);
+
+  function updateFen(fenString: string = serialize(game.current.gameState), allowLoading = false) {
+    if (!isFen(fenString)) {
+      throw new Error(`invalid fen string! ${fenString}`);
+    }
+    // by not setting the current fen, we will let the location.hash update handler load the game state
+    if (!allowLoading) {
+      setCurrentFenString(fenString);
+      setCustomFenString(fenString);
+    }
+    window.location.hash = encodeURIComponent(fenString);
   }
 
   useEffect(() => {
@@ -72,7 +98,6 @@ function App() {
     }
   }, [game.current.gameState.activeColor]);
 
-  const currentFenString = serialize(game.current.gameState);
   useEffect(() => {
     // Define the event handler
     const handleHashChange = () => {
@@ -85,6 +110,7 @@ function App() {
         return;
       }
       console.log('updated game from url fen: ', fenString);
+      updateFen(fenString, false);
       Object.assign(game.current.gameState, deserialize(fenString));
       // TODO: we could probably go back to having game and bot being state?
       forceRender();
@@ -104,7 +130,19 @@ function App() {
     <div className="App">
       <div>{GameStatus[game.current.gameState.gameStatus]}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
-      <div>{currentFenString}</div>
+      <div>
+        <input
+          style={{ width: '30rem' }}
+          value={customFenString}
+          placeholder={StandardStartPositionFEN}
+          onChange={e => setCustomFenString(e.currentTarget.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              updateFen(e.currentTarget.value, true)
+            }
+          }}
+        />
+      </div>
       <ChessBoard
         board={game.current.gameState.board}
         theme={DefaultTheme}
