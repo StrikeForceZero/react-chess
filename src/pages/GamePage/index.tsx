@@ -12,6 +12,12 @@ import {
   SimpleOptions,
 } from '../../components/CustomizableSelect';
 import {
+  FenStringApplyOrOnEnterHandler,
+  FenStringInput,
+  FenStringOnChangeHandler,
+  MaybeFENString,
+} from '../../components/FenStringInput';
+import {
   PlayerType,
   PlayerTypeSelector,
 } from '../../components/PlayerTypeSelector';
@@ -20,6 +26,7 @@ import { AbstractBot } from '../../engine/src/bots/AbstractBot';
 import { RandomBot } from '../../engine/src/bots/RandomBot';
 import { deserializerWithStatus } from '../../engine/src/fen/deserializerWithStatus';
 import {
+  FENString,
   isFen,
   StandardStartPositionFEN,
 } from '../../engine/src/fen/FENString';
@@ -90,6 +97,9 @@ function resolveMainPlayerColor(whitePlayerType: PlayerType, blackPlayerType: Pl
   }
   return PieceColor.White;
 }
+
+const FenStringInputEnforce = FenStringInput<FENString>;
+type FenStringInputProps = Required<Parameters<typeof FenStringInputEnforce>[0]>;
 
 export function GamePage() {
   const game = useGameInitialization();
@@ -228,14 +238,12 @@ export function GamePage() {
     game.current = new Game();
   }, [game, updateFen]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomFenString(e.currentTarget.value);
+  const handleFenChange = useCallback<FenStringInputProps['onChange']>((fen, e) => {
+    setCustomFenString(fen);
   }, []);
 
-  const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      updateFen('user input', e.currentTarget.value, true);
-    }
+  const handleFenApply = useCallback<FenStringInputProps['onApply']>((fen, e) => {
+    updateFen('user input', fen, true);
   }, [updateFen]);
 
   const handleSquareClick = useCallback((fromPos: BoardPosition) => {
@@ -315,18 +323,13 @@ export function GamePage() {
       <button onClick={resetGame}>Reset Game</button>
       <div>Game Status: {game.current.gameState.gameStatus}{winningColorText}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
-      <div>
-        <label htmlFor={'fen-input'}>Fen: </label>
-        <input
-          id={'fen-input'}
-          style={{ width: '30rem' }}
-          value={customFenString}
-          placeholder={StandardStartPositionFEN}
-          onChange={handleInputChange}
-          onKeyDown={handleInputKeyDown}
-        />
-        <span hidden={isFen(customFenString)} style={{ color: 'red', marginLeft: '1rem' }}>Invalid FEN!</span>
-      </div>
+      <FenStringInputEnforce
+        id={'fen-input'}
+        enforceValidFenOnApplyOrOnEnter={true}
+        value={customFenString}
+        onChange={handleFenChange}
+        onApply={handleFenApply}
+      />
       <ChessBoard
         id={'1'}
         gameStatus={game.current.gameState.gameStatus}
