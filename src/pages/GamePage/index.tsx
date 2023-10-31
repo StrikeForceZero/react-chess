@@ -102,6 +102,7 @@ export function GamePage() {
   // TODO: hack - is there a better way to ensure we have the latest version of currentFenStringRef?
   const currentFenStringRef = useExternallyMutableRef(currentFenString);
 
+  const windowLocationHashAssignmentDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const updateFen = useCallback((context: string, fenString: string = serialize(game.current.gameState), allowLoading = false) => {
     console.log(`[${context}] updating fen: ${fenString}`);
     if (!isFen(fenString)) {
@@ -118,11 +119,27 @@ export function GamePage() {
       setHighlightedSquares([]);
     }
     setPromotionFromTo(null);
-    window.location.hash = encodeURIComponent(fenString);
+
+    // Debounce the assignment of window.location.hash
+    if (windowLocationHashAssignmentDebounceTimeoutRef.current) {
+      clearTimeout(windowLocationHashAssignmentDebounceTimeoutRef.current);
+    }
+
+    windowLocationHashAssignmentDebounceTimeoutRef.current = setTimeout(() => {
+      window.location.hash = encodeURIComponent(fenString);
+    }, 300)
   }, [
     currentFenStringRef,
     game,
   ]);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (windowLocationHashAssignmentDebounceTimeoutRef.current) {
+        clearTimeout(windowLocationHashAssignmentDebounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // TODO: might not be needed
   useEffect(() => {
