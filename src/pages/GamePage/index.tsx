@@ -313,7 +313,7 @@ export function GamePage() {
       <PlayerTypeSelector id={'player_type_black'} label={'Black Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeBlack} value={blackPlayerType} />
       <CustomizableSelect id={'bot_delay_ms'} label={'Bot Move Delay MS'} options={SimpleOptions([0, 100, 500, 1000])} defaultValue={botDelayMs} value={botDelayMs} onSelectedValueChange={handleBotDelayMsChange} />
       <button onClick={resetGame}>Reset Game</button>
-      <div>{game.current.gameState.gameStatus}{winningColorText}</div>
+      <div>Game Status: {game.current.gameState.gameStatus}{winningColorText}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
       <div>
         <input
