@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import {
+  HTMLProps,
+  useState,
+} from 'react';
 import styles from './styles.module.css';
 import { Board } from '../../engine/src/board/Board';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
@@ -44,6 +47,7 @@ export function ChessBoard(props: {
   highlightedSquares: BoardPosition[],
   onSquareClick: OnSquareClickHandler,
   onMove: OnMoveHandler,
+  divProps?: HTMLProps<HTMLDivElement>,
 }) {
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
@@ -72,7 +76,7 @@ export function ChessBoard(props: {
       }}
     />));
   return (
-    <div className={styles.chessboard}>
+    <div className={styles.chessboard} {...props.divProps}>
       {squares}
     </div>
   );
