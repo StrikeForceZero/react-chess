@@ -81,13 +81,22 @@ function useExternallyMutableRef<T>(value: T): MutableRefObject<T> {
   return ref;
 }
 
+function resolveMainPlayerColor(whitePlayerType: PlayerType, blackPlayerType: PlayerType): PieceColor {
+  if (whitePlayerType === PlayerType.Human) {
+    return PieceColor.White;
+  }
+  if (blackPlayerType === PlayerType.Human) {
+    return PieceColor.Black;
+  }
+  return PieceColor.White;
+}
+
 export function GamePage() {
   const game = useGameInitialization();
   // TODO: this only used so the bots will automatically start moving when the game state has been reset
   // previously they would only resume if the active color changed
   // this might even cause side effects and needs investigation
   const currentGame = game.current;
-  const playerColor = PieceColor.White;
   const whiteBot = useBot(PieceColor.White);
   const blackBot = useBot(InverseColorMap[whiteBot.playAsColor]);
 
@@ -205,6 +214,11 @@ export function GamePage() {
     };
   }, [game, updateFen, currentFenStringRef]);
 
+  const [mainPlayerColor, setMainPlayerColor] = useState(PieceColor.White)
+  useEffect(() => {
+    setMainPlayerColor(resolveMainPlayerColor(whitePlayerType, blackPlayerType));
+  }, [whitePlayerType, blackPlayerType]);
+
   const isInGameOverState = isGameOver(game.current.gameState);
   const winningColor = game.current.gameState.gameStatus === GameStatus.Checkmate ? InverseColorMap[game.current.gameState.activeColor] : null;
   const winningColorText = winningColor ? ` ${winningColor} Wins!` : null;
@@ -313,15 +327,21 @@ export function GamePage() {
       {/* TODO: need to allow human playing as black to move and promote */}
       <ChessBoard
         board={game.current.gameState.board}
-        playingAs={playerColor}
+        playingAs={mainPlayerColor}
+        allowPlayingBoth={[whitePlayerType, blackPlayerType].every(t => t === PlayerType.Human)}
         highlightedSquares={highlightedSquares}
         onSquareClick={handleSquareClick}
         onMove={handleMove}
       />
       <ChoosePromotionDialog
-        color={playerColor}
+        color={PieceColor.White}
         onPieceSelected={handlePromotionChoice}
-        divProps={{ hidden: promotionFromTo === null }}
+        divProps={{ hidden: game.current.gameState.activeColor !== PieceColor.White || promotionFromTo === null }}
+      />
+      <ChoosePromotionDialog
+        color={PieceColor.Black}
+        onPieceSelected={handlePromotionChoice}
+        divProps={{ hidden: game.current.gameState.activeColor !== PieceColor.Black || promotionFromTo === null }}
       />
     </div>
   );

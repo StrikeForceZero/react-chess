@@ -49,6 +49,7 @@ export function ChessBoard(props: {
   playingAs: PieceColor,
   highlightedSquares: BoardPosition[],
   onSquareClick: OnSquareClickHandler,
+  allowPlayingBoth?: boolean,
   onMove: OnMoveHandler,
   divProps?: HTMLProps<HTMLDivElement>,
   chessBoardSquareProps?: Partial<ChessBoardSquareProps>,
@@ -66,9 +67,9 @@ export function ChessBoard(props: {
         onClick: () => {
           if (selected) {
             const lastSelectedPiece = props.board.getPieceFromPos(selected);
-            if (isColoredPieceContainer(lastSelectedPiece) && lastSelectedPiece.coloredPiece.color === props.playingAs) {
+            if (isColoredPieceContainer(lastSelectedPiece) && (props.allowPlayingBoth || lastSelectedPiece.coloredPiece.color === props.playingAs)) {
               const targetPiece = props.board.getPieceFromPos(s.pos);
-              if (!isColoredPieceContainer(targetPiece) || targetPiece.coloredPiece.color !== props.playingAs) {
+              if (!isColoredPieceContainer(targetPiece) || targetPiece.coloredPiece.color !== lastSelectedPiece.coloredPiece.color) {
                 props.onMove(selected, s.pos);
                 setSelected(s.pos);
                 return;
