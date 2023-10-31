@@ -6,4 +6,5 @@ export const DefaultTheme: Theme = {
   HighlightSquareColor: '#BACA44',
   White: '#FFF',
   Black: '#000',
+  CheckHighlightColor: '#ff0000',
 };

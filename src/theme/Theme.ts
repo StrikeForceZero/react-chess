@@ -6,4 +6,5 @@ export type Theme = {
   HighlightSquareColor: Color,
   White: Color,
   Black: Color,
+  CheckHighlightColor: Color,
 }
