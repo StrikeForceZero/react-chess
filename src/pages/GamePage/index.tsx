@@ -324,7 +324,6 @@ export function GamePage() {
           onKeyDown={handleInputKeyDown}
         />
       </div>
-      {/* TODO: need to allow human playing as black to move and promote */}
       <ChessBoard
         board={game.current.gameState.board}
         playingAs={mainPlayerColor}
