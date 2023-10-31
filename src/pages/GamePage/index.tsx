@@ -316,13 +316,16 @@ export function GamePage() {
       <div>Game Status: {game.current.gameState.gameStatus}{winningColorText}</div>
       <div hidden={isInGameOverState}>{game.current.gameState.activeColor} to play</div>
       <div>
+        <label htmlFor={'fen-input'}>Fen: </label>
         <input
+          id={'fen-input'}
           style={{ width: '30rem' }}
           value={customFenString}
           placeholder={StandardStartPositionFEN}
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
         />
+        <span hidden={isFen(customFenString)} style={{ color: 'red', marginLeft: '1rem' }}>Invalid FEN!</span>
       </div>
       <ChessBoard
         id={'1'}
