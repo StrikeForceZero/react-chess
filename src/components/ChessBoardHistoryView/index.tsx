@@ -8,7 +8,7 @@ import { FENString } from '../../engine/src/fen/FENString';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { ChessBoard } from '../ChessBoard';
 
-export function BoardHistoryView(
+export function ChessBoardHistoryView(
   props: {
     playingAsColor?: PieceColor,
     highlightedSquares?: BoardPosition[],
