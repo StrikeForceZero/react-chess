@@ -2,6 +2,8 @@ import {
   HTMLProps,
   useState,
 } from 'react';
+import { GameStatus } from '../../engine/src/state/GameStatus';
+import { useThemeContext } from '../../theme/ThemeContext';
 import styles from './styles.module.css';
 import { Board } from '../../engine/src/board/Board';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
@@ -45,6 +47,9 @@ export type OnMoveHandler = (fromPos: BoardPosition, toPos: BoardPosition) => vo
 export type OnSquareClickHandler = (pos: BoardPosition) => void;
 
 export function ChessBoard(props: {
+  id?: string,
+  gameStatus?: GameStatus,
+  activeColor?: PieceColor,
   board: Board,
   playingAs: PieceColor,
   highlightedSquares: BoardPosition[],
@@ -54,6 +59,7 @@ export function ChessBoard(props: {
   divProps?: HTMLProps<HTMLDivElement>,
   chessBoardSquareProps?: Partial<ChessBoardSquareProps>,
 }) {
+  const { theme } = useThemeContext();
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
     <ChessBoardSquare
@@ -90,8 +96,31 @@ export function ChessBoard(props: {
       ...props.divProps?.style,
     }
   }
+  const classNames = [
+    // TODO: randomly generate
+    `id_${props.id ?? 'default'}`,
+    styles.chessboard,
+  ];
+  if (props.activeColor) {
+    classNames.push(props.activeColor);
+  }
+  if (props.gameStatus) {
+    classNames.push(props.gameStatus);
+  }
+  const isCheck = props.gameStatus === GameStatus.Check || props.gameStatus === GameStatus.Checkmate;
+  const checkGlowStyles = (
+    // TODO: handle custom sizes
+    <style>
+      {`
+        .id_${props.id}.check .${props.activeColor}.king, .id_${props.id}.checkmate .${props.activeColor}.king {
+          text-shadow: 0 0 2rem ${theme.CheckHighlightColor}, 0 0 2rem ${theme.CheckHighlightColor};
+        }
+      `}
+    </style>
+  );
   return (
-    <div className={styles.chessboard} {...divProps}>
+    <div className={classNames.join(' ')} {...divProps}>
+      {isCheck ? checkGlowStyles : null}
       {squares}
     </div>
   );

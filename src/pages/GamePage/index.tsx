@@ -325,6 +325,9 @@ export function GamePage() {
         />
       </div>
       <ChessBoard
+        id={'1'}
+        gameStatus={game.current.gameState.gameStatus}
+        activeColor={game.current.gameState.activeColor}
         board={game.current.gameState.board}
         playingAs={mainPlayerColor}
         allowPlayingBoth={[whitePlayerType, blackPlayerType].every(t => t === PlayerType.Human)}
