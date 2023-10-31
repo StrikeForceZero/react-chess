@@ -7,14 +7,17 @@ import { useThemeContext } from '../../theme/ThemeContext';
 import { ChessBoardPiece } from '../ChessBoardPiece';
 import styles from './styles.module.css';
 
-export function ChessBoardSquare(props: {
+export type ChessBoardSquareProps = {
   piece: ChessPiece,
   pos: BoardPosition,
   isHighlighted?: boolean,
   // TODO: default to true
   showLabels: boolean,
-  divProps?: HTMLProps<HTMLDivElement>
-}) {
+  divProps?: HTMLProps<HTMLDivElement>,
+  spanProps?: HTMLProps<HTMLSpanElement>,
+};
+
+export function ChessBoardSquare(props: ChessBoardSquareProps) {
   const { theme } = useThemeContext();
   let backgroundColor = (
     boardFileToIndex(props.pos.file) + boardRankToIndex(props.pos.rank)
@@ -26,12 +29,23 @@ export function ChessBoardSquare(props: {
   return (
     <div
       className={styles.square}
-      style={{backgroundColor}}
       {...props.divProps}
+      style={{
+        width: '5rem',
+        height: '5rem',
+        fontSize: '5rem',
+        backgroundColor,
+        ...props.divProps?.style,
+      }}
     >
       <span
         className={styles.square_label}
         hidden={!props.showLabels}
+        {...props.spanProps}
+        style={{
+          fontSize: '1rem',
+          ...props.spanProps?.style,
+        }}
       >
         {props.pos.toString()}
       </span>

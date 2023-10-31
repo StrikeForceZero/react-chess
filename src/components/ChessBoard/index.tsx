@@ -10,7 +10,10 @@ import { resolveMoves } from '../../engine/src/move/PieceMoveMap';
 import { isColoredPieceContainer } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { assertExhaustive } from '../../engine/src/utils/assert';
-import { ChessBoardSquare } from '../ChessBoardSquare';
+import {
+  ChessBoardSquare,
+  ChessBoardSquareProps,
+} from '../ChessBoardSquare';
 
 export function flipBoardVertically(squares: BoardSquare[]): BoardSquare[] {
   return flipBoardHorizontally(squares).reverse();
@@ -48,6 +51,7 @@ export function ChessBoard(props: {
   onSquareClick: OnSquareClickHandler,
   onMove: OnMoveHandler,
   divProps?: HTMLProps<HTMLDivElement>,
+  chessBoardSquareProps?: Partial<ChessBoardSquareProps>,
 }) {
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
@@ -57,6 +61,7 @@ export function ChessBoard(props: {
       pos={s.pos}
       showLabels={true}
       isHighlighted={(!!selected && s.pos.isEqual(selected)) || props.highlightedSquares.map(String).includes(s.pos.toString())}
+      {...props.chessBoardSquareProps}
       divProps={{
         onClick: () => {
           if (selected) {
@@ -73,10 +78,19 @@ export function ChessBoard(props: {
           setSelected(s.pos);
           props.onSquareClick(s.pos);
         },
+        ...props.chessBoardSquareProps?.divProps,
       }}
     />));
+  const divProps = {
+    ...props.divProps,
+    style: {
+      width: '40rem',
+      height: '40rem',
+      ...props.divProps?.style,
+    }
+  }
   return (
-    <div className={styles.chessboard} {...props.divProps}>
+    <div className={styles.chessboard} {...divProps}>
       {squares}
     </div>
   );

@@ -1,6 +1,4 @@
 .chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  width: 40rem;
-  height: 40rem;
 }

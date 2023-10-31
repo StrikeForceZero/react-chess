@@ -3,9 +3,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 5rem;
-  height: 5rem;
-  font-size: 5rem;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none;    /* Firefox */
@@ -21,5 +18,4 @@
   position: absolute;
   top: 0;
   left: 0;
-  font-size: 1rem;
 }
