@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { CapturedPiecesView } from '../../components/CapturedPiecesView';
 import { ChessBoard } from '../../components/ChessBoard';
 import { ChessBoardWithHistory } from '../../components/ChessBoardWithHistory';
 import { ChoosePromotionDialog } from '../../components/ChoosePromotionDialog';
@@ -340,6 +341,8 @@ export function GamePage() {
         highlightedSquares={highlightedSquares}
         onSquareClick={handleSquareClick}
         onMove={handleMove}
+        beforeBoard={<div><span>{mainPlayerColor} Captures:</span><CapturedPiecesView capturedPieces={game.current.gameState.capturedPieces} filterByColor={mainPlayerColor} /></div>}
+        afterBoard={<div><span>{InverseColorMap[mainPlayerColor]} Captures:</span><CapturedPiecesView capturedPieces={game.current.gameState.capturedPieces} filterByColor={InverseColorMap[mainPlayerColor]} /></div>}
       />
       <ChoosePromotionDialog
         color={PieceColor.White}
