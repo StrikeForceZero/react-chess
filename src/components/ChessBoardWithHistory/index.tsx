@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { deserializerWithStatus } from '../../engine/src/fen/deserializerWithStatus';
 import { Game } from '../../engine/src/game/Game';
 import { revert } from '../../engine/src/state/utils/GameStatusUtils';
 import {
