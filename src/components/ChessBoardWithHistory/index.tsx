@@ -53,6 +53,7 @@ export function ChessBoardWithHistory(
 
   const onPlayFromHere = useCallback(() => {
     console.log(`playing from: (${moveIndex}) ${game.gameState.history.history[moveIndex]}`);
+    // TODO: recalculate captured pieces from history
     revert(game.gameState, moveIndex);
   }, [game, moveIndex]);
 
@@ -89,6 +90,7 @@ export function ChessBoardWithHistory(
     )
   }
   const selectedFen = game.gameState.history.history[moveIndex];
+  // TODO: recalculate highlighted squares from history
   return (
     <>
       {historyControls}
