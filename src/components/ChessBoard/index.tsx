@@ -46,7 +46,7 @@ export function flipBoardForColor(board: Board, color: PieceColor): BoardSquare[
 export type OnMoveHandler = (fromPos: BoardPosition, toPos: BoardPosition) => void;
 export type OnSquareClickHandler = (pos: BoardPosition) => void;
 
-export function ChessBoard(props: {
+export type ChessBoardProps = {
   id?: string,
   gameStatus?: GameStatus,
   activeColor?: PieceColor,
@@ -58,7 +58,9 @@ export function ChessBoard(props: {
   onMove: OnMoveHandler,
   divProps?: HTMLProps<HTMLDivElement>,
   chessBoardSquareProps?: Partial<ChessBoardSquareProps>,
-}) {
+};
+
+export function ChessBoard(props: ChessBoardProps) {
   const { theme } = useThemeContext();
   const [selected, setSelected] = useState<BoardPosition | null>(null);
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
