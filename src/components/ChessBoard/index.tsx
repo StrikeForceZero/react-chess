@@ -1,4 +1,4 @@
-import {
+import React, {
   HTMLProps,
   useEffect,
   useState,
@@ -49,6 +49,8 @@ export type OnSquareClickHandler = (pos: BoardPosition) => void;
 
 export type ChessBoardProps = {
   id?: string,
+  beforeBoard?: React.ReactNode,
+  afterBoard?: React.ReactNode,
   gameStatus?: GameStatus,
   activeColor?: PieceColor,
   board: Board,
@@ -127,9 +129,13 @@ export function ChessBoard(props: ChessBoardProps) {
     </style>
   );
   return (
-    <div className={classNames.join(' ')} {...divProps}>
-      {isCheck ? checkGlowStyles : null}
-      {squares}
-    </div>
+    <>
+      {props.beforeBoard}
+      <div className={classNames.join(' ')} {...divProps}>
+        {isCheck ? checkGlowStyles : null}
+        {squares}
+      </div>
+      {props.afterBoard}
+    </>
   );
 }
