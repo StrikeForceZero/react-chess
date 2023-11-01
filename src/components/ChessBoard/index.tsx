@@ -1,5 +1,6 @@
 import {
   HTMLProps,
+  useEffect,
   useState,
 } from 'react';
 import { GameStatus } from '../../engine/src/state/GameStatus';
@@ -63,6 +64,11 @@ export type ChessBoardProps = {
 export function ChessBoard(props: ChessBoardProps) {
   const { theme } = useThemeContext();
   const [selected, setSelected] = useState<BoardPosition | null>(null);
+
+  useEffect(() => {
+    setSelected(null);
+  }, [props.board]);
+
   const squares = flipBoardForColor(props.board, props.playingAs).map(s => (
     <ChessBoardSquare
       key={s.pos.toString()}
