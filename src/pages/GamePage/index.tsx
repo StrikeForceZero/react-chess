@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { ChessBoard } from '../../components/ChessBoard';
+import { ChessBoardWithHistory } from '../../components/ChessBoardWithHistory';
 import { ChoosePromotionDialog } from '../../components/ChoosePromotionDialog';
 import {
   CustomizableSelect,
@@ -330,11 +331,9 @@ export function GamePage() {
         onChange={handleFenChange}
         onApply={handleFenApply}
       />
-      <ChessBoard
+      <ChessBoardWithHistory
         id={'1'}
-        gameStatus={game.current.gameState.gameStatus}
-        activeColor={game.current.gameState.activeColor}
-        board={game.current.gameState.board}
+        game={game.current}
         playingAs={mainPlayerColor}
         allowPlayingBoth={[whitePlayerType, blackPlayerType].every(t => t === PlayerType.Human)}
         highlightedSquares={highlightedSquares}
