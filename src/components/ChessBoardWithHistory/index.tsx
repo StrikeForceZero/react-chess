@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { deserializerWithStatus } from '../../engine/src/fen/deserializerWithStatus';
 import { Game } from '../../engine/src/game/Game';
+import { revert } from '../../engine/src/state/utils/GameStatusUtils';
 import {
   ChessBoard,
   ChessBoardProps,
@@ -25,18 +26,22 @@ export function ChessBoardWithHistory(
     ...props
   }: ChessBoardWithHistoryProps
 ) {
-  const totalMoves = game.gameState.history.history.length;
-  const lastMoveIndex = totalMoves - 1;
+  const totalMoves = Math.max(game.gameState.history.history.length - 1, 0);
+  const lastMoveIndex = game.gameState.history.history.length - 1;
   const [moveIndex, setMoveIndex] = useState(propMoveIndex ?? lastMoveIndex);
 
+  // update moveIndex if props.moveIndex changes
   useEffect(() => {
-    console.log(`moveIndex prop updated ${moveIndex} -> ${propMoveIndex}`);
+    if (moveIndex === propMoveIndex || propMoveIndex === undefined) {
+      return;
+    }
     setMoveIndex(moveIndex => propMoveIndex ?? moveIndex);
-  }, [propMoveIndex]);
+  }, [moveIndex, propMoveIndex]);
 
+  // detect new moves
   useEffect(() => {
-    console.log('new move detected');
-    setMoveIndex(moveIndex => game.gameState.history.history.length > 0 ? game.gameState.history.history.length - 1 : 0);
+    // don't use cached value, re-access it to make sure we have the latest count
+    setMoveIndex(moveIndex => game.gameState.history.history.length > 1 ? game.gameState.history.history.length - 1 : 0);
   }, [game.gameState.history.history.length]);
 
   const onPrev = useCallback(() => {
@@ -47,11 +52,19 @@ export function ChessBoardWithHistory(
     setMoveIndex(moveIndex => moveIndex + 1);
   }, []);
 
+  const onPlayFromHere = useCallback(() => {
+    console.log(`playing from: (${moveIndex}) ${game.gameState.history.history[moveIndex]}`);
+    revert(game.gameState, moveIndex);
+  }, [game, moveIndex]);
+
+  console.log([moveIndex, lastMoveIndex])
+
   const historyControls = (
     <div>
       <button onClick={onPrev} disabled={moveIndex === 0}>{'<'}</button>
-      {moveIndex + 1}/{totalMoves}
+      {moveIndex}/{totalMoves}
       <button onClick={onNext} disabled={totalMoves === 0 || moveIndex === lastMoveIndex}>{'>'}</button>
+      <button onClick={onPlayFromHere} hidden={moveIndex === lastMoveIndex}>Play from here</button>
     </div>
   );
 
@@ -83,21 +96,9 @@ export function ChessBoardWithHistory(
       <FenToChessBoard
         {...props}
         fen={selectedFen}
-        onMove={(...args) => {
-          const historyCopy = game.gameState.history.history.slice(0, moveIndex);
-          // fix history
-          Object.assign(
-            game.gameState,
-            {
-              ...deserializerWithStatus(selectedFen, true),
-              history: {
-                ...game.gameState.history,
-                history: historyCopy,
-              },
-            },
-          );
-          props.onMove(...args);
-        }}
+        onMove={() => {}}
+        onSquareClick={() => {}}
+        highlightedSquares={[]}
       />
     </>
   );
