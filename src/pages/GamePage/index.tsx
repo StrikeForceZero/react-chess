@@ -237,6 +237,7 @@ export function GamePage() {
   const resetGame = useCallback(() => {
     updateFen('reset button', StandardStartPositionFEN, false);
     game.current = new Game();
+    setHighlightedSquares([]);
   }, [game, updateFen]);
 
   const handleFenChange = useCallback<FenStringInputProps['onChange']>((fen, e) => {
