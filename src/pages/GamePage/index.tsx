@@ -5,26 +5,25 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import {
+  BotType,
+  BotTypeSelector,
+} from '../../components/BotTypeSelector';
 import { CapturedPiecesView } from '../../components/CapturedPiecesView';
-import { ChessBoard } from '../../components/ChessBoard';
 import { ChessBoardWithHistory } from '../../components/ChessBoardWithHistory';
 import { ChoosePromotionDialog } from '../../components/ChoosePromotionDialog';
 import {
   CustomizableSelect,
   SimpleOptions,
 } from '../../components/CustomizableSelect';
-import {
-  FenStringApplyOrOnEnterHandler,
-  FenStringInput,
-  FenStringOnChangeHandler,
-  MaybeFENString,
-} from '../../components/FenStringInput';
+import { FenStringInput } from '../../components/FenStringInput';
 import {
   PlayerType,
   PlayerTypeSelector,
 } from '../../components/PlayerTypeSelector';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { AbstractBot } from '../../engine/src/bots/AbstractBot';
+import { BasicBot } from '../../engine/src/bots/BasicBot';
 import { RandomBot } from '../../engine/src/bots/RandomBot';
 import { deserializerWithStatus } from '../../engine/src/fen/deserializerWithStatus';
 import {
@@ -71,13 +70,23 @@ const useGameInitialization = (): MutableRefObject<Game> => {
   return game;
 };
 
-const useBot = (botColor: PieceColor): AbstractBot => {
+const useBot = (botColor: PieceColor, botType: BotType): AbstractBot => {
   const [bot, setBot] = useState<AbstractBot>(new RandomBot(botColor));
 
   useEffect(() => {
     console.log('reload bot');
-    setBot(new RandomBot(botColor));
-  }, [botColor]);
+    switch (botType) {
+      case BotType.Random:
+        console.log('creating random bot');
+        setBot(new RandomBot(botColor));
+        break;
+      case BotType.Basic:
+        console.log('creating basic bot');
+        setBot(new BasicBot(botColor));
+        break;
+      default: assertExhaustive(botType);
+    }
+  }, [botColor, botType]);
 
   return bot;
 };
@@ -109,8 +118,10 @@ export function GamePage() {
   // previously they would only resume if the active color changed
   // this might even cause side effects and needs investigation
   const currentGame = game.current;
-  const whiteBot = useBot(PieceColor.White);
-  const blackBot = useBot(InverseColorMap[whiteBot.playAsColor]);
+  const [whiteBotType, setWhiteBotType] = useState(BotType.Random);
+  const whiteBot = useBot(PieceColor.White, whiteBotType);
+  const [blackBotType, setBlackBotType] = useState(BotType.Random);
+  const blackBot = useBot(InverseColorMap[whiteBot.playAsColor], blackBotType);
 
   const [whitePlayerType, setWhitePlayerType] = useState(PlayerType.Human);
   const [blackPlayerType, setBlackPlayerType] = useState(PlayerType.Bot);
@@ -318,10 +329,32 @@ export function GamePage() {
     setBotDelayMs(botDelay);
   }, []);
 
+  const handleBotTypeChange = useCallback((color: PieceColor, botType: BotType) => {
+    switch (color) {
+      case PieceColor.White:
+        setWhiteBotType(botType);
+        break;
+      case PieceColor.Black:
+        setBlackBotType(botType);
+        break;
+      default: return assertExhaustive(color);
+    }
+  }, []);
+
+  const handleBotTypeChangeWhite = useCallback((botType: BotType) => {
+    handleBotTypeChange(PieceColor.White, botType);
+  }, [handleBotTypeChange]);
+
+  const handleBotTypeChangeBlack = useCallback((botType: BotType) => {
+    handleBotTypeChange(PieceColor.Black, botType);
+  }, [handleBotTypeChange]);
+
   return (
     <div className="App">
       <PlayerTypeSelector id={'player_type_white'} label={'White Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeWhite} value={whitePlayerType} />
+      <BotTypeSelector id={'bot_type_white'} label={'White Bot Type: '} onBotTypeChange={handleBotTypeChangeWhite} value={whiteBotType} divProps={{ hidden: whitePlayerType !== PlayerType.Bot }} />
       <PlayerTypeSelector id={'player_type_black'} label={'Black Player Type: '} onPlayerTypeChange={handlePlayerTypeChangeBlack} value={blackPlayerType} />
+      <BotTypeSelector id={'bot_type_white'} label={'White Bot Type: '} onBotTypeChange={handleBotTypeChangeBlack} value={blackBotType} divProps={{ hidden: blackPlayerType !== PlayerType.Bot }} />
       <CustomizableSelect id={'bot_delay_ms'} label={'Bot Move Delay MS'} options={SimpleOptions([0, 100, 500, 1000])} defaultValue={botDelayMs} value={botDelayMs} onSelectedValueChange={handleBotDelayMsChange} />
       <button onClick={resetGame}>Reset Game</button>
       <div>Game Status: {game.current.gameState.gameStatus}{winningColorText}</div>
