@@ -57,8 +57,6 @@ export function ChessBoardWithHistory(
     revert(game.gameState, moveIndex);
   }, [game, moveIndex]);
 
-  console.log([moveIndex, lastMoveIndex])
-
   const historyControls = (
     <div>
       <button onClick={onPrev} disabled={moveIndex === 0}>{'<'}</button>
