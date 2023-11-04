@@ -34,7 +34,6 @@ import {
 import { serialize } from '../../engine/src/fen/serialize';
 import { Game } from '../../engine/src/game/Game';
 import { resolveMoves } from '../../engine/src/move/PieceMoveMap';
-import { isColoredPieceContainer } from '../../engine/src/piece/ChessPiece';
 import {
   InverseColorMap,
   PieceColor,
@@ -263,12 +262,12 @@ export function GamePage() {
   const handleSquareClick = useCallback((fromPos: BoardPosition) => {
     const movingPiece = game.current.gameState.board.getPieceFromPos(fromPos);
 
-    if (!isColoredPieceContainer(movingPiece)) {
+    if (!movingPiece.isSome()) {
       setHighlightedSquares([]);
       return;
     }
 
-    const moves = resolveMoves(movingPiece.coloredPiece.pieceType, movingPiece.coloredPiece.color);
+    const moves = resolveMoves(movingPiece.value.pieceType, movingPiece.value.color);
     const validMoves = moves.map(move => move.getValidMovesForPosition(game.current.gameState, fromPos));
     const allValidMoveTargetPositions = validMoves.flatMap(executableMoves => executableMoves.map(em => em.toPos));
 

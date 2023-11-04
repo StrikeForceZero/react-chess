@@ -9,8 +9,6 @@ import styles from './styles.module.css';
 import { Board } from '../../engine/src/board/Board';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
 import { BoardSquare } from '../../engine/src/board/BoardSquare';
-import { resolveMoves } from '../../engine/src/move/PieceMoveMap';
-import { isColoredPieceContainer } from '../../engine/src/piece/ChessPiece';
 import { PieceColor } from '../../engine/src/piece/PieceColor';
 import { assertExhaustive } from '../../engine/src/utils/assert';
 import {
@@ -83,9 +81,9 @@ export function ChessBoard(props: ChessBoardProps) {
         onClick: () => {
           if (selected) {
             const lastSelectedPiece = props.board.getPieceFromPos(selected);
-            if (isColoredPieceContainer(lastSelectedPiece) && (props.allowPlayingBoth || lastSelectedPiece.coloredPiece.color === props.playingAs)) {
+            if (lastSelectedPiece.isSome() && (props.allowPlayingBoth || lastSelectedPiece.value.color === props.playingAs)) {
               const targetPiece = props.board.getPieceFromPos(s.pos);
-              if (!isColoredPieceContainer(targetPiece) || targetPiece.coloredPiece.color !== lastSelectedPiece.coloredPiece.color) {
+              if (!targetPiece.isSome() || targetPiece.value.color !== lastSelectedPiece.value.color) {
                 props.onMove(selected, s.pos);
                 setSelected(s.pos);
                 return;

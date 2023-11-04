@@ -3,12 +3,13 @@ import { toIndex as boardFileToIndex } from '../../engine/src/board/BoardFile';
 import { toIndex as boardRankToIndex } from '../../engine/src/board/BoardRank';
 import { ChessPiece } from '../../engine/src/piece/ChessPiece';
 import { BoardPosition } from '../../engine/src/board/BoardPosition';
+import { Option } from '../../engine/src/utils/Option';
 import { useThemeContext } from '../../theme/ThemeContext';
 import { ChessBoardPiece } from '../ChessBoardPiece';
 import styles from './styles.module.css';
 
 export type ChessBoardSquareProps = {
-  piece: ChessPiece,
+  piece: Option<ChessPiece>,
   pos: BoardPosition,
   isHighlighted?: boolean,
   // TODO: default to true
@@ -24,6 +25,12 @@ export function ChessBoardSquare(props: ChessBoardSquareProps) {
   ) % 2 === 0 ? theme.LightSquareColor : theme.DarkSquareColor;
   if (props.isHighlighted) {
     backgroundColor = theme.HighlightSquareColor;
+  }
+
+  let piece = null;
+
+  if (props.piece.isSome()) {
+    piece = <ChessBoardPiece piece={props.piece.value} />
   }
 
   return (
@@ -49,7 +56,7 @@ export function ChessBoardSquare(props: ChessBoardSquareProps) {
       >
         {props.pos.toString()}
       </span>
-      <ChessBoardPiece piece={props.piece} />
+      {piece}
     </div>
   );
 }
