@@ -25,8 +25,8 @@ export function ChessBoardWithHistory(
     ...props
   }: ChessBoardWithHistoryProps
 ) {
-  const totalMoves = Math.max(game.gameState.history.history.length - 1, 0);
-  const lastMoveIndex = game.gameState.history.history.length - 1;
+  const totalMoves = Math.max(game.gameState.history.fen.length - 1, 0);
+  const lastMoveIndex = game.gameState.history.fen.length - 1;
   const [moveIndex, setMoveIndex] = useState(propMoveIndex ?? lastMoveIndex);
 
   // update moveIndex if props.moveIndex changes
@@ -40,8 +40,8 @@ export function ChessBoardWithHistory(
   // detect new moves
   useEffect(() => {
     // don't use cached value, re-access it to make sure we have the latest count
-    setMoveIndex(moveIndex => game.gameState.history.history.length > 1 ? game.gameState.history.history.length - 1 : 0);
-  }, [game.gameState.history.history.length]);
+    setMoveIndex(moveIndex => game.gameState.history.fen.length > 1 ? game.gameState.history.fen.length - 1 : 0);
+  }, [game.gameState.history.fen.length]);
 
   const onPrev = useCallback(() => {
     setMoveIndex(moveIndex => moveIndex - 1);
@@ -52,7 +52,7 @@ export function ChessBoardWithHistory(
   }, []);
 
   const onPlayFromHere = useCallback(() => {
-    console.log(`playing from: (${moveIndex}) ${game.gameState.history.history[moveIndex]}`);
+    console.log(`playing from: (${moveIndex}) ${game.gameState.history.fen[moveIndex]}`);
     // TODO: recalculate captured pieces from history
     revert(game.gameState, moveIndex);
   }, [game, moveIndex]);
@@ -79,7 +79,7 @@ export function ChessBoardWithHistory(
       </>
     );
   }
-  if (!game.gameState.history.history[moveIndex]) {
+  if (!game.gameState.history.fen[moveIndex]) {
     return (
       <>
         {historyControls}
@@ -87,7 +87,7 @@ export function ChessBoardWithHistory(
       </>
     )
   }
-  const selectedFen = game.gameState.history.history[moveIndex];
+  const selectedFen = game.gameState.history.fen[moveIndex];
   // TODO: recalculate highlighted squares from history
   return (
     <>
